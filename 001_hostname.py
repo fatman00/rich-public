@@ -5,6 +5,7 @@ from rich.progress import track
 from rich.tree import Tree
 from rich.table import Table
 from rich.prompt import Prompt
+from rich.prompt import Confirm
 
 import pynetbox
 import os
@@ -40,15 +41,22 @@ if __name__ == "__main__":
 
     testbed = load("empty-testbed.yaml")
 
-    tree = Tree("Device Tree", guide_style="bold bright_blue")
+    console = Console()
+
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Netbox Name", style="bold")
+    table.add_column("Device Name")
+    table.add_column("Device Type", justify="right")
+
     console.log("Collecting information and STP for all devices...")
+    allDevices = list(allDevices)
+    devicesForUpdate = []
     for device in track(allDevices):
-        branch = tree.add(f"[green bold]Name: {device.name}[/green bold]")
         deviceIp = ""
         try:
             deviceIp = str(device.primary_ip4.address).split("/")[0]
         except:
-            branch.add(f"[red]Unable to connect[/red]")
+            console.log(f"[red]Unable to connect[/red]")
         if not deviceIp is "":
             print(f"Connecting to {device.name} using IP: {deviceIp}...")
             dev = add_device(device.name, "ios", testbed, ip_addr=deviceIp)
@@ -71,6 +79,10 @@ if __name__ == "__main__":
         chassis = version.get('chassis')
         chassis = f"[green]{device.device_type}[/green]" if str(device.device_type) == chassis else f"[red]{device.device_type}:{chassis}[/red]"
         table.add_row(f"{device.name}", f"{hostname}", f"{chassis}")
-        device.name = version.get('hostname')
-        device.save()
+        if str(device.name) != hostname:
+            device.name = version.get('hostname')
+            devicesForUpdate.append(device)
     console.print(table)
+    if Confirm.ask("Do you want to update hostnames for device?", default=True):
+        [dev.save() for dev in devicesForUpdate]
+        console.print("updating")
