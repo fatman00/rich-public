@@ -29,7 +29,6 @@ except KeyError as exc:
     print("export PYATS_USERNAME=<your-login-username>")
     print("export PYATS_PASSWORD=<your-login-password>")
     print(f"ERROR: missing ENVAR: {exc}")
-    print(f"Using default from myconfig.py")
 
 #console.print(NETBOX_URL, NETBOX_TOKEN, CLI_USERNAME, CLI_PASSWORD)
 
