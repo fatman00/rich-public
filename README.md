@@ -11,6 +11,12 @@ CLI_USERNAME = "developer"
 CLI_PASSWORD = "C1sco12345"
 ```
 
+Use environment variables to connect to devices:
+```
+export PYATS_USERNAME=developer
+export PYATS_PASSWORD=C1sco12345
+```
+
 To update pip, run:
 ``` 
       pip install --upgrade pip
