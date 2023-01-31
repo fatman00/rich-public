@@ -17,11 +17,23 @@ export PYATS_USERNAME=developer
 export PYATS_PASSWORD=C1sco12345
 ```
 
+Install python venv
+```
+apt install python3.8-venv
+```
+
+Create and activate the venv:
+```
+python -m venv venv
+source ./venv/bin/activate
+```
+
 To update pip, run:
 ``` 
-      pip install --upgrade pip
+pip install --upgrade pip
 ```
-And install pyats with:
+And install all requirement:
 ```
-pip install pyats[full]
+#pip install pyats[full]
+pip install -r requirements.txt
 ```
