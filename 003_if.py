@@ -37,21 +37,23 @@ if __name__ == "__main__":
     nb.http_session.verify = False
 
     # Collecting all site switches of type cisco with the right tag
-    allDevices = nb.dcim.devices.filter(status='active', manufacturer_id=1, tag='sn-update')
+    #allDevices = nb.dcim.devices.filter(status='active', manufacturer_id=1, tag='if-update')
+    allDevices = nb.dcim.devices.filter(status='active', tag='if-update')
+
 
     testbed = load("empty-testbed.yaml")
 
     console = Console()
 
     table = Table(show_header=True, header_style="bold magenta")
-    table.add_column("Netbox Name", style="bold")
-    table.add_column("Device Type")
-    table.add_column("Netbox S/N")
-    table.add_column("Device S/N", justify="right")
+    table.add_column("Netbox ID", style="bold")
+    table.add_column("Interface")
+    table.add_column("Type")
+    table.add_column("Description")
 
-    console.log("Collecting information and STP for all devices...")
+    console.log("Collecting information for all devices...")
     allDevices = list(allDevices)
-    devicesForUpdate = []
+    addInterfaceList = [] # The interface list to add to NB
     for device in track(allDevices):
         deviceIp = ""
         try:
@@ -67,22 +69,62 @@ if __name__ == "__main__":
         print(f"Collecting information for {device.name}")
 
         try:
-            dev.connect(log_stdout=False, connection_timeout=10)
-            platform = dev.learn('platform')
+            dev.connect(log_stdout=False, learn_hostname=True, connection_timeout=10)
+            interfaces = dev.learn('interface')
         except Exception as e:
             print(e)
             continue
         device.tags = [tag for tag in device.tags if tag.name != "sn-update"]
-        device.save()
-        chassis_sn = platform.chassis_sn
-        chassis_sn = device.serial if str(device.serial) == chassis_sn else f"[red]{chassis_sn}[/red]"
-        chassis = platform.chassis
-        chassis = f"[green]{device.device_type}[/green]" if str(device.device_type) == chassis else f"[red]{device.device_type}:{chassis}[/red]"
-        table.add_row(f"{device.name}", f"{chassis}", f"{device.serial}", f"{chassis_sn}")
-        if str(device.serial) != platform.chassis_sn:
-            device.serial = platform.chassis_sn
-            devicesForUpdate.append(device)
+        #device.save()
+        interfaces = interfaces.to_dict().get('info')
+
+        nbInterface = nb.dcim.interfaces.filter(device=device)
+        nbInterfaceList = list(nbInterface)
+        nbInterfaceName = [i.name for i in nbInterfaceList]
+
+        
+        for interface in interfaces:
+            print(interface)
+            interfaceType = "other"
+            if "GigabitEthernet" in interface:
+                interfaceType = "1000base-t"
+            if "FastEthernet" in interface:
+                interfaceType = "100base-tx"
+            if "TenGigabitEthernet" in interface:
+                interfaceType = "10gbase-x-sfpp"
+            if "TwentyFiveGigE" in interface:
+                interfaceType = "25gbase-x-sfp28"
+            if "FortyGigabitEthernet" in interface: 
+                interfaceType = "40gbase-x-qsfpp"
+            if "HundredGigE" in interface: 
+                interfaceType = "100gbase-x-qsfp28"
+            if "BVI" in interface:
+                interfaceType = "virtual"
+            if "BDI" in interface:
+                interfaceType = "virtual"
+            if "Vlan" in interface:
+                interfaceType = "virtual"
+            if "Tunnel" in interface:
+                interfaceType = "virtual"
+            if "Loopback" in interface:
+                interfaceType = "virtual"
+            if "Port-channel" in interface:
+                interfaceType = "lag"
+            if "." in interface:
+                interfaceType = "virtual"
+            if "Trans" in interface:
+                interfaceType = "other"
+            if interfaceType is not "other" and interface not in nbInterfaceName:
+                newInterface = {}
+                newInterface['device']= device.id
+                newInterface['name'] = interface
+                newInterface['type'] = interfaceType
+                if "description" in interfaces[interface]:
+                    newInterface['description'] = interfaces[interface]['description']    
+                #print(nb.dcim.interfaces.create(newInterface))
+                addInterfaceList.append(newInterface)
+    for interface in addInterfaceList:
+        table.add_row(str(interface.get('device')), interface.get('name'), interface.get('type'), interface.get('description'))
     console.print(table)
-    if Confirm.ask("Do you want to update Serial for device?", default=True):
-        [dev.save() for dev in devicesForUpdate]
-        console.print("updating")
+    if Confirm.ask("Do you want to update Interfaces for devices?", default=True):
+        console.print(f"updating... {nb.dcim.interfaces.create(addInterfaceList)}")
