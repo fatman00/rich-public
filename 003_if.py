@@ -49,7 +49,7 @@ if __name__ == "__main__":
     table.add_column("Netbox S/N")
     table.add_column("Device S/N", justify="right")
 
-    console.log("Collecting information for all devices...")
+    console.log("Collecting information and STP for all devices...")
     allDevices = list(allDevices)
     devicesForUpdate = []
     for device in track(allDevices):

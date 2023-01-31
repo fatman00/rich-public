@@ -48,7 +48,7 @@ if __name__ == "__main__":
     table.add_column("Device Name")
     table.add_column("Device Type", justify="right")
 
-    console.log("Collecting information and STP for all devices...")
+    console.log("Collecting information for all devices...")
     allDevices = list(allDevices)
     devicesForUpdate = []
     for device in track(allDevices):
