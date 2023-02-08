@@ -7,6 +7,7 @@ from rich.table import Table
 from rich.prompt import Prompt
 
 import pynetbox
+import datetime
 import os
 import urllib3
 from myconfig import NETBOX_URL, NETBOX_TOKEN
@@ -68,6 +69,7 @@ if __name__ == "__main__":
         try:
             dev.connect(log_stdout=False, learn_hostname=True, connection_timeout=10)
             stp = dev.parse('show spanning-tree detail')
+            collectionTime = datetime.datetime.now()
         except Exception as e:
             print(e)
             continue
@@ -81,6 +83,7 @@ if __name__ == "__main__":
                 branch.add(f"[green]bridge_address: {instances[instance]['bridge_address']}[/green]")
             else:
                 branch.add(f"[cyan]bridge_address: {instances[instance]['bridge_address']}[/cyan]")
+            branch.add(f"[cyan]Collection timestamp: {collectionTime}[/cyan]")
             branch.add(f"[cyan]topology_changes: {instances[instance]['topology_changes']}[/cyan]")
             branch.add(f"[cyan]time_since_topology_change: {instances[instance]['time_since_topology_change']}[/cyan]")
             tcn_port = instances[instance]['topology_from_port']

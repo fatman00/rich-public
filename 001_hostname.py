@@ -76,6 +76,7 @@ if __name__ == "__main__":
         version = version.get('version')
         hostname = version.get('hostname')
         hostname = hostname if str(device.name) == hostname else f"[red]{hostname}[/red]"
+        hostname = ":thumbs_up: "+hostname if str(device.name) in str(version.get('hostname')) else ":cross_mark: "+hostname
         chassis = version.get('chassis')
         chassis = f"[green]{device.device_type}[/green]" if str(device.device_type) == chassis else f"[red]{device.device_type}:{chassis}[/red]"
         table.add_row(f"{device.name}", f"{hostname}", f"{chassis}")
