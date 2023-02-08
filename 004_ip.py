@@ -45,16 +45,15 @@ if __name__ == "__main__":
 
     console = Console()
 
-    
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Netbox ID", style="bold")
+    table.add_column("Interface")
+    table.add_column("IP")
 
     console.log("Collecting information for all devices...")
     allDevices = list(allDevices)
     addInterfaceList = [] # The interface list to add to NB
     for device in track(allDevices):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Netbox ID", style="bold")
-        table.add_column("Interface")
-        table.add_column("IP")
 
         deviceIp = ""
         try:
