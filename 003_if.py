@@ -74,7 +74,7 @@ if __name__ == "__main__":
         except Exception as e:
             print(e)
             continue
-        device.tags = [tag for tag in device.tags if tag.name != "sn-update"]
+        device.tags = [tag for tag in device.tags if tag.name != "if-update"]
         #device.save()
         interfaces = interfaces.to_dict().get('info')
 
