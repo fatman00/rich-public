@@ -81,7 +81,7 @@ if __name__ == "__main__":
         neighbors = neighbors.values()
         newNeighbors = []
         for neighbor in neighbors:
-            print(neighbor.get("device_id"))
+            # print(neighbor.get("device_id"))
             #newNeighbors = [new for new in newNeighbors if new.get("device_id") != neighbor.get("device_id")]
             if neighbor.get("device_id") not in [new.get("device_id") for new in newNeighbors]:
                 newNeighbors.append(neighbor)

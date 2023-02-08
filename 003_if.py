@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
         
         for interface in interfaces:
-            print(interface)
+            # print(interface)
             interfaceType = "other"
             if "GigabitEthernet" in interface:
                 interfaceType = "1000base-t"
