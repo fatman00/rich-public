@@ -75,7 +75,7 @@ if __name__ == "__main__":
             print(e)
             continue
         device.tags = [tag for tag in device.tags if tag.name != "if-update"]
-        #device.save()
+        device.save()
         interfaces = interfaces.to_dict().get('info')
 
         nbInterface = nb.dcim.interfaces.filter(device=device)
