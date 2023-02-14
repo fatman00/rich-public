@@ -133,7 +133,7 @@ if __name__ == "__main__":
             try:
                 nb.dcim.cables.create(cable)
             except Exception as e:
-                print(e)
+                console.log(e)
                 continue
 
         
