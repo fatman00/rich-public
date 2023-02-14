@@ -60,7 +60,7 @@ if __name__ == "__main__":
             console.log(f"[red]Unable to connect[/red]")
         if not deviceIp is "":
             print(f"Connecting to {device.name} using IP: {deviceIp}...")
-            dev = add_device(device.name, "ios", testbed, ip_addr=deviceIp)
+            dev = add_device(device.name, "iosxe", testbed, ip_addr=deviceIp)
         else:
             continue
 

@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
 
     for interface in updateInterfaceList:
-        print(interface["device"]["name"], interface["name"], interface["lag"])
+        # print(interface["device"]["name"], interface["name"], interface["lag"])
         table.add_row(str(interface["device"]["name"]), str(interface["name"]), str(interface["lag"]))
         
     console.print(table)

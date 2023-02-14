@@ -79,7 +79,7 @@ if __name__ == "__main__":
             print(e)
             continue
         device.tags = [tag for tag in device.tags if tag.name != "cdp-update"]
-        # device.save()
+        device.save()
         neighbors = data['index'] # Interfaces from PyATS
         neighbors = neighbors.values()
 
@@ -128,6 +128,12 @@ if __name__ == "__main__":
     console.print(table)
     if Confirm.ask(f"Do you want to update cables({len(newCables)}) for devices?", default=True):
         # console.print("not implemented")
-        console.print(f"updating... {nb.dcim.cables.create(newCables)}")
+        console.print(f"updating...")
+        for cable in newCables:
+            try:
+                nb.dcim.cables.create(cable)
+            except Exception as e:
+                print(e)
+                continue
 
         

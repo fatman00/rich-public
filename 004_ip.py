@@ -53,6 +53,7 @@ if __name__ == "__main__":
     console.log("Collecting information for all devices...")
     allDevices = list(allDevices)
     addInterfaceList = [] # The interface list to add to NB
+    addPrefixList = []
     for device in track(allDevices):
 
         deviceIp = ""
@@ -86,7 +87,7 @@ if __name__ == "__main__":
         nbIpsList = list(nbIps)
         nbIpsList = [ips.display for ips in nbIpsList]
         
-        addPrefixList = []
+        
         for interface in nbInterfaceList:
             if interface.name in atsInterfaces.keys():
                 if "ipv4" in atsInterfaces[interface.name].keys():

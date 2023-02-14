@@ -47,15 +47,14 @@ if __name__ == "__main__":
 
     console.log("Collecting information for all devices...")
     allDevices = list(allDevices)
+    table = Table(show_header=True, header_style="bold magenta")
+    table.add_column("Device", style="bold")
+    table.add_column("Sanitised ID")
+    table.add_column("management_addresses")
+    table.add_column("local_interface")
+    table.add_column("port_id")
+    table.add_column("platform")
     for device in track(allDevices):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Device", style="bold")
-        table.add_column("Sanitised ID")
-        table.add_column("management_addresses")
-        table.add_column("local_interface")
-        table.add_column("port_id")
-        table.add_column("platform")
-
         deviceIp = ""
         try:
             deviceIp = str(device.primary_ip4.address).split("/")[0]

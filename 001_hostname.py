@@ -80,7 +80,7 @@ if __name__ == "__main__":
         chassis = version.get('chassis')
         chassis = f"[green]{device.device_type}[/green]" if str(device.device_type) == chassis else f"[red]{device.device_type}:{chassis}[/red]"
         table.add_row(f"{device.name}", f"{hostname}", f"{chassis}")
-        if str(device.name) != hostname:
+        if str(device.name) != str(version.get('hostname')):
             device.name = version.get('hostname')
             devicesForUpdate.append(device)
     console.print(table)
