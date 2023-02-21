@@ -20,7 +20,7 @@ from quickstart import disable_console_log, make_ssh_conn, add_device
 # Disable all SSL errors
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-console = Console()
+console = Console(record=True)
 
 try:
     assert all(os.environ[env] for env in ['PYATS_USERNAME', 'PYATS_PASSWORD'])
@@ -106,3 +106,8 @@ if __name__ == "__main__":
             branch.add(table)
     
     console.print(tree)
+    saveTimestamp = datetime.datetime.now().strftime("%Y%m%d_%H:%M:%S")
+    CONSOLE_HTML_FORMAT = """\
+    <pre style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">{code}</pre>
+    """
+    #console.save_html(f"STP-Status-{siteShort}-{saveTimestamp}.md", inline_styles=True, code_format=CONSOLE_HTML_FORMAT)
