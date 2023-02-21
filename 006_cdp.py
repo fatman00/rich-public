@@ -87,7 +87,9 @@ if __name__ == "__main__":
             
         for neighbor in newNeighbors:
             sanDeviceId = neighbor.get("device_id", "unknown").split('.')[0]
-            mgmtIp = list(neighbor.get("management_addresses").keys())[0]+"/24"
+            mgmtIp = "[red]None[/red]"
+            if len(neighbor.get("management_addresses").keys()):
+                mgmtIp = list(neighbor.get("management_addresses").keys())[0]+"/24"
             table.add_row(str(device.name), str(sanDeviceId), str(mgmtIp), neighbor.get("local_interface"), neighbor.get("port_id"), neighbor.get("platform"))
     console.print(table)   
 
