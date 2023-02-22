@@ -71,6 +71,8 @@ if __name__ == "__main__":
             stp = dev.parse('show spanning-tree detail')
             collectionTime = datetime.datetime.now()
         except Exception as e:
+            error = branch.add(f"[red]Undefined error occured during CLI parsing[/red]")
+            error.add(f"[red bold]{e}[/red bold]")
             print(e)
             continue
         #stp = stp.to_dict()['info']
