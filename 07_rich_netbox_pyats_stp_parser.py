@@ -67,7 +67,7 @@ if __name__ == "__main__":
         print(f"Collecting information for {device.name}")
 
         try:
-            dev.connect(log_stdout=False, learn_hostname=True, connection_timeout=10)
+            dev.connect(log_stdout=False, connection_timeout=10)
             stp = dev.parse('show spanning-tree detail')
             collectionTime = datetime.datetime.now()
         except Exception as e:
@@ -104,10 +104,10 @@ if __name__ == "__main__":
                     table.add_row(interfaces[interface].get('name'), str(interfaces[interface].get('cost')), str(interfaces[interface].get('status')), interfaces[interface].get('link_type'), str(interfaces[interface].get('internal')))
                 #print(interfaces[interface])
             branch.add(table)
-    
+
     console.print(tree)
-    saveTimestamp = datetime.datetime.now().strftime("%Y%m%d_%H:%M:%S")
+    saveTimestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     CONSOLE_HTML_FORMAT = """\
     <pre style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">{code}</pre>
     """
-    #console.save_html(f"STP-Status-{siteShort}-{saveTimestamp}.md", inline_styles=True, code_format=CONSOLE_HTML_FORMAT)
+    console.save_html(f"STP-Status-{siteShort}-{saveTimestamp}.html", inline_styles=True, code_format=CONSOLE_HTML_FORMAT)
