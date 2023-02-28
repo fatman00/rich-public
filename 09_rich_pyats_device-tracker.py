@@ -39,7 +39,7 @@ if __name__ == "__main__":
     for device in track(allDevices.split()):
         branch = tree.add(f"[green bold]Name: {device}[/green bold]")
         print(f"Connecting to {device}...")
-        dev = add_device(device, "ios", testbed, ip_addr=device)
+        dev = add_device(device, "iosxe", testbed, ip_addr=device)
 
 
         print(f"Collecting information for {device}")
