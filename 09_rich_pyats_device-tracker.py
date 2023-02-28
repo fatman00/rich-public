@@ -30,14 +30,14 @@ except KeyError as exc:
 
 if __name__ == "__main__":
     # connect to netbox
-    allDevices = Prompt.ask("Type Device IP/hostname", default="10.2.20.21")
+    allDevices = Prompt.ask("Type Device IP/hostname", default="10.36.20.120")
     
     testbed = load("empty-testbed.yaml")
 
     tree = Tree("Device Tree", guide_style="bold bright_blue")
     console.log("Collecting information and counters from devices...")
     for device in track(allDevices.split()):
-        branch = tree.add(f"[green bold]Name: {device}[/green bold]")
+        branch = tree.add(f"[green bold]Device IP: {device}[/green bold]")
         print(f"Connecting to {device}...")
         dev = add_device(device, "iosxe", testbed, ip_addr=device)
 
@@ -46,34 +46,37 @@ if __name__ == "__main__":
 
         try:
             dev.connect(log_stdout=False, learn_hostname=True, connection_timeout=10)
-            interface = dev.learn('interface')
+            deviceTracking = dev.parse('show device-tracking database')
+            #interface = dev.learn('interface') # Maybee not needed
+            version = dev.parse('show version')
+            version = version.get('version')
+            hostname = version.get('hostname')
             collectionTime = datetime.datetime.now()
         except Exception as e:
             error = branch.add(f"[red]Undefined error occured during CLI parsing[/red]")
             error.add(f"[red bold]{e}[/red bold]")
             print(e)
             continue
-        interface = interface.to_dict()['info']
+        branch.add(f"[bold]Name: {hostname}[/bold]")
+        #interface = interface.to_dict()['info']
         # if True:
         table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("name", style="bold")
-        table.add_column("type")
-        table.add_column("oper_status")
-        table.add_column("bandwidth")
-        table.add_column("counters:rate:in_rate")
-        table.add_column("counters:rate:out_rate")
-        for int in interface:
-            type = interface[int].get('type')
-            oper_status = interface[int].get('oper_status')
-            bandwidth = interface[int].get('bandwidth')
-            if interface[int].get('counters') == None:
-                continue
-            in_rate = interface[int].get('counters').get('rate').get('in_rate')
-            in_rate_pct = in_rate / (bandwidth * 1000)
-            out_rate = interface[int].get('counters').get('rate').get('out_rate')
-            out_rate_pct = out_rate / (bandwidth * 1000)
-            style = "bright_green" if oper_status == "up" else "bright_blue"
-            table.add_row(int, str(type), str(oper_status), str(bandwidth), str(in_rate_pct), str(out_rate_pct), style=style)
+        table.add_column("interface", style="bold")
+        table.add_column("dev_code")
+        table.add_column("network_layer_address")
+        table.add_column("link_layer_address")
+        table.add_column("vlan_id")
+        table.add_column("vendor_code")
+        table.add_column("state")
+        for entry in deviceTracking.get('device').values():
+            interface = entry.get('interface')
+            dev_code = entry.get('dev_code')
+            network_layer_address = entry.get('network_layer_address')
+            link_layer_address = entry.get('link_layer_address')
+            vlan_id = entry.get('vlan_id')
+            state = entry.get('state')
+            style = "bright_green" if state == "REACHABLE" else "bright_blue"
+            table.add_row(str(interface), str(dev_code), str(network_layer_address), str(link_layer_address), str(vlan_id), str("None"), str(state), style=style)
             # branch.add(f"[cyan]Name: {int}[/cyan]")
         branch.add(table)
 
