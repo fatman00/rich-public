@@ -100,4 +100,11 @@ if __name__ == "__main__":
     console.print(table)
     if Confirm.ask("Do you want to update interfaces for devices?", default=True):
         # console.print("not implemented")
-        console.print(f"updating... {nb.ipam.ip_addresses.create(addPrefixList)}")
+        console.print(f"updating... ")
+        for prefix in addPrefixList:
+            try:
+                nb.ipam.ip_addresses.create(prefix)
+            except Exception as e:
+                console.log(e)
+                continue
+            

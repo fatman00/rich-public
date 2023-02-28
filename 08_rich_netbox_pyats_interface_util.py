@@ -76,12 +76,31 @@ if __name__ == "__main__":
             print(e)
             continue
         interface = interface.to_dict()['info']
-        interface = [int for int in interface.keys() if interface[int].get('type') == "Gigabit Ethernet"]
+        # if True:
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("name", style="bold")
+        table.add_column("type")
+        table.add_column("oper_status")
+        table.add_column("bandwidth")
+        table.add_column("counters:rate:in_rate")
+        table.add_column("counters:rate:out_rate")
         for int in interface:
-            #print(instances[instance])
-            branch.add(f"[cyan]Name: {int}[/cyan]")
+            type = interface[int].get('type')
+            oper_status = interface[int].get('oper_status')
+            bandwidth = interface[int].get('bandwidth')
+            if interface[int].get('counters') == None:
+                continue
+            in_rate = interface[int].get('counters').get('rate').get('in_rate')
+            in_rate_pct = in_rate / (bandwidth * 1000)
+            out_rate = interface[int].get('counters').get('rate').get('out_rate')
+            out_rate_pct = out_rate / (bandwidth * 1000)
+            style = "bright_green" if oper_status == "up" else "bright_blue"
+            table.add_row(int, str(type), str(oper_status), str(bandwidth), str(in_rate_pct), str(out_rate_pct), style=style)
+            # branch.add(f"[cyan]Name: {int}[/cyan]")
+        branch.add(table)
 
     console.print(tree)
+    # console.print(table)
     saveTimestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     CONSOLE_HTML_FORMAT = """\
     <pre style="font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">{code}</pre>
