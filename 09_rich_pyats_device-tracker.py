@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
         try:
             dev.connect(log_stdout=False, learn_hostname=True, connection_timeout=10)
-            deviceTracking = dev.parse('show device-tracking database')
+            deviceTracking = dev.parse('show device-tracking database details')
             #interface = dev.learn('interface') # Maybee not needed
             version = dev.parse('show version')
             version = version.get('version')
@@ -66,6 +66,7 @@ if __name__ == "__main__":
         table.add_column("network_layer_address")
         table.add_column("link_layer_address")
         table.add_column("vlan_id")
+        table.add_column("mode")
         table.add_column("vendor_code")
         table.add_column("state")
         for entry in deviceTracking.get('device').values():
@@ -74,9 +75,10 @@ if __name__ == "__main__":
             network_layer_address = entry.get('network_layer_address')
             link_layer_address = entry.get('link_layer_address')
             vlan_id = entry.get('vlan_id')
+            mode = entry.get('mode')
             state = entry.get('state')
             style = "bright_green" if state == "REACHABLE" else "bright_blue"
-            table.add_row(str(interface), str(dev_code), str(network_layer_address), str(link_layer_address), str(vlan_id), str("None"), str(state), style=style)
+            table.add_row(str(interface), str(dev_code), str(network_layer_address), str(link_layer_address), str(vlan_id), str(mode), str("None"), str(state), style=style)
             # branch.add(f"[cyan]Name: {int}[/cyan]")
         branch.add(table)
 
