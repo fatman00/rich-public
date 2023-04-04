@@ -31,6 +31,7 @@ except KeyError as exc:
 if __name__ == "__main__":
     # connect to netbox
     allDevices = Prompt.ask("Type Device IP/hostname", default="10.36.20.120")
+    #allDevices = Prompt.ask("Type Device IP/hostname", default="10.50.20.10")
     
     testbed = load("empty-testbed.yaml")
 
