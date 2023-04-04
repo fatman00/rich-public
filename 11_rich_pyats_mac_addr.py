@@ -28,6 +28,11 @@ except KeyError as exc:
 
 #console.print(NETBOX_URL, NETBOX_TOKEN, CLI_USERNAME, CLI_PASSWORD)
 
+# Create a dict from the variables added.
+def createDict(*args):
+     return dict(((k, eval(k)) for k in args))
+
+
 if __name__ == "__main__":
     # connect to netbox
     allDevices = Prompt.ask("Type Device IP/hostname", default="10.36.20.120")
