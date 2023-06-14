@@ -11,13 +11,22 @@ import argparse
 import datetime
 import os
 import urllib3
+import re
 
 console = Console(record=True)
 
-def exportMAC(data):
+def extractMACdata(data):
     datadump = []
     for line in data.splitlines():
-        datadump.append(line)
+        ifpattern = r'(?:Fa|Gi)\s?\d+(?:\/\d+){0,2}(?:[\.:]\d+)?'
+        vlanpattern = r'^\s*[0-9]{1,4}'
+        macpattern = r'([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})'
+        ifmatch = re.findall(ifpattern, line)
+        vlanmatch = re.findall(vlanpattern, line)
+        if len(ifmatch) is not 0:
+            ifmatch = ifmatch[0]
+            vlanmatch = vlanmatch[0].strip()
+            datadump.append([vlanmatch, ifmatch])
     return datadump
 
 if __name__ == "__main__":
@@ -28,12 +37,17 @@ if __name__ == "__main__":
     parser.add_argument('--output')
     parser.add_argument('-a', '--arplist', type=argparse.FileType('r'), nargs=1, required=False,
                         help='File with show ip arp from the Layer 3 device')
+    parser.add_argument('-if', '--ifname', type=ascii, required=False, default="(?:Fa|Gi)\s?\d+(?:\/\d+){0,2}(?:[\.:]\d+)?",
+                        help='regex to match interfaces names for access ports')
     parser.add_argument('--csvout', type=argparse.FileType('w'), nargs=1, required=False,
                         help='File csvfile for output')
     args = parser.parse_args()
     print(f"arplist:{args.arplist}")
+    print(f"ifname:{args.ifname}")
+    newmac = []
     for file in args.maclist:
-        print(file.read())
+        newmac = extractMACdata(file.read())
+    print(newmac)
 
 
 
